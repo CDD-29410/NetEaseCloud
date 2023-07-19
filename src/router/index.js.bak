@@ -1,0 +1,33 @@
+
+import indexView from '../views/indexView.vue';
+import mineView from '../views/mineView.vue';
+import homeView from '../views/homeView.vue';
+const viewMap={
+    indexView,
+    homeView,
+    mineView,
+}
+export default {
+    data(){
+        return{
+            visibleView:"indexView"
+        }
+    },
+    components:{ indexView },
+    // 动态返回一个整数的data
+    // computed === methods + data 
+    computed:{
+            currentComponent(){
+                return viewMap[this.visibleView]
+            }
+    },
+    beforeCreate(){
+        window.onhashchange=()=>{
+            this.visibleView = location.hash.replace('#','')
+            console.log(this.visibleView)
+        }
+    },
+    created(){
+        window.vw=this
+    }
+}
