@@ -103,10 +103,12 @@
           <Icon icon="ri:more-2-fill" color="white" />
         </div>
         <!-- 进度条 -->
-        <div>
-          <span></span>
-          <vue-slider v-model="valueNum"  class="mt-[8vw]"></vue-slider>
-          <span></span>
+        <div class="flex items-center mt-[8vw] text-[#D8B08E] text-[2vw] ">
+          <span class="mr-[2vw]">{{(Math.floor(player._progress/60)<10?('0'+Math.floor(player._progress/60)):Math.floor(player._progress/60))
+          +':'+(Math.floor(player._progress%60)<10?('0'+Math.floor(player._progress%60)):Math.floor(player._progress%60))}}</span>
+          <vue-slider :tooltip="'none'" v-model="valueNum" width="72vw" class="mx-[2vw]"></vue-slider>
+          <span class="ml-[2vw]">{{(Math.floor(player._duration/60)<10?('0'+Math.floor(player._duration/60)):Math.floor(player._duration/60))
+          +':'+(Math.floor(player._duration%60)<10?('0'+Math.floor(player._duration%60)):Math.floor(player._duration%60))}}</span>
         </div>
          
         <!-- 播放键 -->
@@ -135,7 +137,10 @@
 import { set } from 'vue';
 import Player from './Player' ; 
 import axios from 'axios';
-export default {   
+export default {  
+  components:{
+    
+  },
   data() {
     return {
       player: new Player(),
@@ -145,7 +150,7 @@ export default {
       show: false, //展示歌单表
       Scrollable: false, //文字滑块
       broadcastHall: false,//播放厅
-      valueNum:'',
+      valueNum:0,
       currentRatePlay: 0,//当前进度
       currentProgress: '',//目标进度
       transformDeg:'',
@@ -177,7 +182,6 @@ export default {
     BroadcastHall() {
       this.broadcastHall = !this.broadcastHall
       this.show = false;
-      console.log(this.player._currentTrack?.name)
     },
 
     //歌单点击播放
@@ -194,8 +198,6 @@ export default {
   async created() {
     window.$player = this.player;   
     this.id = this.$route.params.id;
-    console.log(this)
-
   },
   watch:{
     "player._playing"(newVal) {
@@ -231,10 +233,12 @@ export default {
     'player._currentTrack.id'(newSong){
       if(newSong){
         this.num=0
-        this.csew='5555'
-        console.log(this.csew)
       }
+    },
+    'player._progress'(){  
+      this.valueNum= Math.round(($player._progress/$player._duration)*100)
     }
+    
   },
 }
 </script>
