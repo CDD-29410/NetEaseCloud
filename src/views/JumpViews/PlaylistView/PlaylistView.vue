@@ -107,7 +107,7 @@
                 </li>
             </ul>
         </div>
-        <Play />
+        <!-- <Play /> -->
     </div>
 </template>
 <script>
@@ -130,6 +130,7 @@ export default {
             isscrollable:false,//文字是否滚动
             single:'first',
             rotated: false,//是否自动转动
+            id :'', //播放音乐歌单的id
         }
     },
     methods: {
@@ -166,6 +167,7 @@ export default {
     async created() {
         this.id = this.$route.params.id
         console.log(this.id)
+        // 歌单音乐数据
         axios
             .get(
                 `https://netease-cloud-music-api-five-roan-88.vercel.app/playlist/track/all?id=${this.id}`
@@ -177,26 +179,32 @@ export default {
             .catch((err) => {
                 console.log(err);
             });
+
+        //歌单
         axios
             .get(
                 `https://netease-cloud-music-api-five-roan-88.vercel.app/playlist/detail?id=${this.id}`
             )
             .then((res) => {
                 this.musicData = res.data.playlist
+                // console.log(this.musicData)
             })
             .catch((err) => {
                 console.log(err);
             });
+        //获取音乐 url - 新版
         axios
             .get(
                 `https://netease-cloud-music-api-five-roan-88.vercel.app/song/url/v1?id=${this.id}&level=exhigh`
             )
             .then((res) => {
                 this.Music = res
+                // console.log(this.Music)
             })
             .catch((err) => {
                 console.log(err);
             });
+        //获取音乐 url
         axios
             .get(
                 `https://netease-cloud-music-api-five-roan-88.vercel.app/song/url?id=${this.id}`

@@ -3,18 +3,18 @@
     <div 
       class="z-[999] h-[14vw] w-[100vw] pb-[2.5vw] flex justify-between items-center fixed bottom-0 bg-[#FBFEFE] border-t">
       <div class="w-[10vw] h-[10vw] ml-[4vw] relative" @click="BroadcastHall">
-        <img :src="player._currentTrack.al?.picUrl" alt="" class="w-[8vw] rounded-[50%] absolute top-[1vw] left-[1vw]"  />
+        <img :src="player._currentTrack?.al?.picUrl" alt="" class="w-[8vw] rounded-[50%] absolute top-[1vw] left-[1vw]"  />
         <img src="/static/play1.png" alt="" class="w-[10vw] rounded-[50%] absolute" />
       </div>
       <!-- 通知栏 -->
       <div>
         <van-notice-bar background="transparent"  :scrollable="Scrollable" @click="BroadcastHall"
           class="text-[3.5vw] text-[#7E8289] font-[600] h-[4vw] w-[60vw]">
-          <span class="text-[#000]" v-for="key1 in player._currentTrack.ar" :key="key1.id">
-            {{ key1.name }}
+          <span class="text-[#000]" v-for="key1 in player._currentTrack?.ar" :key="key1.id">
+            {{ key1?.name }}
           </span>
           <span>-</span>
-          <span>{{ player._currentTrack.name }}</span>
+          <span>{{ player._currentTrack?.name }}</span>
         </van-notice-bar>
       </div>
       <div class="flex justify-between">
@@ -50,12 +50,14 @@
       </div>
       <div class="px-[4vw] mt-[25vw]">
         <ul class="h-[107vw]">
-          <li class="h-[11vw] flex justify-between items-center" v-for="(key2,index) in player.list" :key="index.id"
+          <li class="h-[11vw] flex justify-between items-center" v-for="(key2,index) in songs" :key="index.id"
             @click="BroadcastHall ,fn(index)"> 
             <div class="flex items-center">
               <img src="/static/wave.gif" alt="" class="red-image h-[4vw]" />
-            <span class="text-[4vw] ml-[3vw]">{{ key2 }}</span>
-              <span class="text-[3.2vw] self-end text-[#999]"> · 作者</span>
+              <p class="flex items-center truncate w-[60vw]">
+                <span class="text-[4vw] ml-[3vw]">{{ key2.name }}</span>
+                <span class="text-[3.2vw] self-end text-[#999] " v-for="(key3,index) in key2.ar" :key="index">·{{key3.name}}</span>
+              </p>
             </div>
             <div class="flex items-center">
               <span class="px-[1.5vw] rounded-[3vw] border-[#EFEFEF] border-[.2vw] text-[3.2vw] mr-[5vw]">来源</span>
@@ -73,10 +75,10 @@
       <div class="h-[15vw] text-[7vw] flex items-center justify-between">
         <Icon icon="ps:down" color="white" @click.native="BroadcastHall" />
         <div class="flex flex-col items-center justify-evenly ">
-          <van-notice-bar scrollable background="transparent"  class="text-[4.7vw] text-[#fff] w-[60vw] "  >{{ player._currentTrack.name }}</van-notice-bar>
+          <van-notice-bar scrollable background="transparent"  class="text-[4.7vw] text-[#fff] w-[60vw] "  >{{this.player._currentTrack?.name}}</van-notice-bar>
           <p class="text-[4vw] text-[#D5BE9A]">
-            <span v-for="key1 in player._currentTrack.ar" :key="key1.id">
-              {{ key1.name }}
+            <span v-for="key1 in player._currentTrack?.ar" :key="key1.id">
+              {{ key1?.name }}
             </span>
         <van-tag round color=[#95764D] >关注</van-tag></p>
         </div>
@@ -87,11 +89,11 @@
         <img src="/static/needle-ab.png" alt="" class="h-[40vw] absolute top-[5vw] left-[44vw]  transform  origin-[14.74%_14.74%]  z-[999]" :style="{transform:transformDeg}">
         <div class="h-[75vw] w-[75vw] mt-[30vw] flex flex-col items-center relative " :style="{transform:isRevolve}">
           <img src="/static/play1.png" alt="" class="h-[75vw] rounded-[50%]  "  />
-          <img :src="player._currentTrack.al?.picUrl" alt="" class="h-[55vw]  w-[55vw] rounded-[50%] absolute top-10" />
+          <img :src="player._currentTrack?.al?.picUrl" alt="" class="h-[55vw]  w-[55vw] rounded-[50%] absolute top-10" />
         </div>
       </div>
       <!-- 底部 -->
-      <div class=" mt-[40vw] w-[92vw] ">
+      <div class=" mt-[35vw] w-[92vw] ">
         <!-- 功能类 -->
         <div class="h-[10vw] text-[6.5vw] flex items-center justify-around">
           <Icon icon="mdi:heart-outline" color="white" />
@@ -131,8 +133,8 @@
 </template>
 <script>
 import { set } from 'vue';
-import Player from './Player';
-// :style="{transform: isRevolve}" 
+import Player from './Player' ; 
+import axios from 'axios';
 export default {   
   data() {
     return {
@@ -152,6 +154,7 @@ export default {
       num:0,
       t1:null,
       t2:null,
+      songs:[],
     };
   },
   methods: {
@@ -160,9 +163,9 @@ export default {
       this.condition = !this.condition;
       this.Scrollable = !this.Scrollable;
       if(this.condition){
-        this.transformDeg='rotate(0deg)'
-      }else{
         this.transformDeg='rotate(-30deg)'
+      }else{
+        this.transformDeg='rotate(0deg)'
       }
       window.$player.playOrPause();
     },
@@ -174,7 +177,7 @@ export default {
     BroadcastHall() {
       this.broadcastHall = !this.broadcastHall
       this.show = false;
-      console.log(this.player._currentTrack.name)
+      console.log(this.player._currentTrack?.name)
     },
 
     //歌单点击播放
@@ -188,10 +191,11 @@ export default {
       )
     }
   },
-  created() {
+  async created() {
     window.$player = this.player;   
-    this.id = this.$route.params.id
-    console.log(this.id)
+    this.id = this.$route.params.id;
+    console.log(this)
+
   },
   watch:{
     "player._playing"(newVal) {
@@ -210,7 +214,20 @@ export default {
         clearInterval(this.t1); 
         clearInterval(this.t2);
       }
+
+      axios
+      .get(
+          `https://netease-cloud-music-api-five-roan-88.vercel.app/playlist/track/all?id=${this.id}`
+      )
+      .then((res) => {
+          this.songs = res.data.songs
+          console.log(this.songs)
+      })
+      .catch((err) => {
+          console.log(err);
+      });
     },
+
     'player._currentTrack.id'(newSong){
       if(newSong){
         this.num=0

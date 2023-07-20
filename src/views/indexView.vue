@@ -1,7 +1,7 @@
 
 
 <template>
-  <div class="p-[3vw] bg-gradient-to-b from-[#E2DFF3] to-[#fff] relative">
+  <div class="p-[3vw] bg-gradient-to-b from-[#8174c8] to-[#fff] relative">
     <!-- <router-link to="/Search">go to SearchView</router-link> -->
     <!-- <div>
       <homeView />

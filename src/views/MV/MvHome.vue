@@ -3,11 +3,10 @@
         <div class="px-[4vw]">
             <van-sticky>
                 <div class="flex items-center h-[15vw] text-[5.5vw] bg-[#fff]">
-                    <Icon icon="ph:arrow-left" />
+                    <Icon icon="ph:arrow-left" @click.native="home" />
                     <span class="ml-[4vw] font-[600]">MV排行榜</span>
                 </div>
             </van-sticky>
-
             <van-tabs v-model="originate" sticky offset-top="14.82vw" animated @click="onClick">
                 <van-tab v-for="(region, index) in regions" :title="region" :key="index.id" title-style="fontSize:'3.5vw'" class="">
                     <p class="my-[5vw] text-[3.5vw]">更新时间:7月17日</p>
@@ -28,7 +27,7 @@
             </van-tabs>
         </div>
         <!-- mv视频 -->
-        <van-popup v-model="display" position="bottom" :style="{ height: '100%' }"
+        <van-popup v-if="isTrue" v-model="display" position="bottom" :style="{ height: '100%' }"
             class=" fixed bottom-0 bg-[#000000] z-[999]">
             <div class="flex justify-between items-center p-[4vw] text-[5.5vw]">
                 <Icon icon="ph:arrow-left" color="white" @click.native="hide" />
@@ -42,21 +41,38 @@
                 <video :src="featMvUrls?.url" loop autoplay class="mt-[20vw]" ></video>
             </div>
 
-            <div class="p-[4vw]">
-                <div>
-                    <div class="flex items-center h-[10vw] text-[#fff] text-[3.5vw]"  v-if="isTrue" >
+            <div class=" h-[70vw] relative">
+                <div class="flex flex-col text-[#fff] absolute bottom-0 left-[4vw]">
+                    <div class="flex items-center h-[10vw] text-[#fff] text-[3.5vw]" >
                         <img :src="featMvDetails.artists[0].img1v1Url" alt="" class="h-[10wv] w-[10vw] mr-1 rounded-[50%]">
                         <span class="mr-1">{{featMvDetails.artists[0].name}}</span>
                         <van-tag round type="primary" class="px-[2vw]"> + </van-tag>
                     </div>
+                    <div class="text-[3.5vw] mt-[2.5vw] w-[72vw]"> {{featMvDetails.name}} </div>
+                    <div class="text-[#848484] mt-[2.5vw] text-[2.5vw]"> {{featMvDetails.publishTime}} </div>
+                    <div> 1213</div>
                 </div>
-                <div>
-                    <div>
-
+                <div class="h-[70vw] flex flex-col items-center justify-between absolute top-0 right-[4vw] text-[#fff]">
+                    <div class="flex flex-col items-center ">
+                        <Icon icon="icon-park-solid:good-two" color="white" class=" text-[7.5vw]" />
+                        <span class="text-[3vw]">{{(Math.round(featMvDetailInfo1s.likedCount) / 10000).toFixed(1)}}万</span> 
                     </div>
+                    <div class="flex flex-col items-center">
+                        <Icon icon="uil:comment-lines" color="white" class=" text-[7.5vw]" />
+                        <span class="text-[3vw] ">{{ featMvDetailInfo1s.commentCount }}</span> 
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <Icon icon="mingcute:share-forward-fill" color="white" class=" text-[7.5vw]" />
+                        <span class="text-[3vw]">{{ featMvDetailInfo1s.shareCount }}</span> 
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <Icon icon="solar:calendar-add-bold" color="white" class=" text-[7.5vw]" />
+                        <span class="text-[3vw]">收藏</span> 
+                    </div>
+                    <img :src=featMvDetails.cover alt="" class="h-[10vw] w-[10vw] rounded-[50%]">
                 </div>
             </div>
-            <p @click="onclick" class="text-[3.5vw] w-screen p-[4vw] text-[#2c2] absolute bottom-0">这么精彩不发条评论吗~</p>
+            <p @click="onclick" class=" border-t border-red-500 text-[3.5vw] w-screen p-[4vw] text-[#2c2] absolute bottom-0">这么精彩不发条评论吗~</p>
         </van-popup>
     </div>
 </template>
@@ -107,7 +123,10 @@ export default {
         }, 
         onclick(){
             console.log( this.featMvDetails)
-        }
+        },
+        home() {
+            this.$router.push(`indexView`);
+        },
     },
     watch: {
         //各个地区的mv排行
@@ -131,7 +150,7 @@ export default {
             //   获取 mv 点赞转发评论数数据
             const featMvDetailInfo1 = await featMvDetailInfo(newVal);
             this.featMvDetailInfo1s =  featMvDetailInfo1.data;
-            console.log(this.featMvDetails);
+            console.log(this.featMvDetailInfo1s);
         },
     },
 };
@@ -141,5 +160,9 @@ export default {
 .van-sticky--fixed {
     padding: 0 3.94vw !important;
     
+}
+.van-tab__text {
+    font-size: 3vw !important;
+    overflow: visible !important;;
 }
 </style>
